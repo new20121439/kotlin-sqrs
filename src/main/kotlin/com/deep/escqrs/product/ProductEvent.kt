@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
     val changePrice = ChangeProductPrice(uuid, 10, 0)
     productCommandHandler.handle(changePrice)
 
-    val changePrice2 = ChangeProductPrice(uuid, 10, 1)
+    val changePrice2 = ChangeProductPrice(uuid, 20, 1)
     productCommandHandler.handle(changePrice2)
 
     eventStore.printStore()
@@ -50,7 +50,6 @@ data class ProductCreated(
     val name: String,
     val price: Int
 ): Event()
-
 data class ProductPriceChanged (
     override val id: AggregateIdType,
     val price: Int
@@ -98,9 +97,17 @@ class Product (
     }
 
     fun changePrice(newPrice: Int) {
-//        var latestEvent = events.filter { it: Event -> it.}
-//        if (latestEvent != null && latestEvent?.price == newPrice) throw ArgumentException("New price is already existed")
         if (newPrice < 0) throw ArgumentException("Price must not be negative")
+        var latestPrice: Int? = null
+        for (item in events) {
+            latestPrice = when(item) {
+                is ProductCreated -> item.price
+                is ProductPriceChanged -> item.price
+                else -> null
+            }
+            if (latestPrice != null) break
+        }
+        if (latestPrice != null  && latestPrice == newPrice) throw ArgumentException("New price is already set")
         applyChange(ProductPriceChanged(id, newPrice))
     }
 }
@@ -144,11 +151,12 @@ class EventStore (
         if (!store.containsKey(aggregateId)) {
             throw AggregateNotFoundException()
         }
-        return store[aggregateId]?.map { it.data } ?: emptyList()
+        return store[aggregateId]
+            ?.sortedByDescending { it.version }
+            ?.map { it.data } ?: emptyList()
     }
 
     fun saveEvents(aggregateId: AggregateIdType, events: List<Event>, expectedVersion: Int) {
-       println("Save Events with id $aggregateId")
         var eventDescriptors: MutableList<EventDescriptor>  = mutableListOf()
         if (!store.containsKey(aggregateId)) {
             store[aggregateId] = eventDescriptors
