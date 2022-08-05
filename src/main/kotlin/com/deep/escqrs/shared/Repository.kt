@@ -1,8 +1,8 @@
 package com.deep.escqrs.product
 
-import AggregateIdType
-import AggregateRoot
-import IRepository
+import com.deep.escqrs.core.AggregateIdType
+import com.deep.escqrs.core.AggregateRoot
+import com.deep.escqrs.core.IRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 

@@ -1,6 +1,6 @@
 package com.deep.escqrs.product
 
-import IRepository
+import com.deep.escqrs.core.IRepository
 
 class ProductCommandHandler (
     private val repository: IRepository<Product>

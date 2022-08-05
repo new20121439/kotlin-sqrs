@@ -1,7 +1,7 @@
 package com.deep.escqrs.product
 
-import AggregateIdType
-import AggregateRoot
+import com.deep.escqrs.core.AggregateIdType
+import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.Event
 
 

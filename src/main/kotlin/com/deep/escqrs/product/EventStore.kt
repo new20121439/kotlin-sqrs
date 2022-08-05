@@ -1,18 +1,13 @@
 package com.deep.escqrs.product
 
-import AggregateIdType
+import com.deep.escqrs.core.AggregateIdType
 import com.deep.escqrs.core.Event
+import com.deep.escqrs.core.EventDescriptor
 
 
 class EventStore (
-    private val store: HashMap<AggregateIdType, MutableList<EventDescriptor>> = HashMap()
+    val store: HashMap<AggregateIdType, MutableList<EventDescriptor>> = HashMap()
 ){
-    data class EventDescriptor (
-        val id: AggregateIdType,
-        val data: Event,
-        val version: Int
-    )
-
     fun getEventsForAggregate(aggregateId: AggregateIdType): List<Event>{
         if (!store.containsKey(aggregateId)) {
             throw AggregateNotFoundException()

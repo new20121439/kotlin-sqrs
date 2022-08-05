@@ -1,6 +1,6 @@
 package com.deep.escqrs.product
 
-import AggregateIdType
+import com.deep.escqrs.core.AggregateIdType
 import com.deep.escqrs.core.Command
 
 

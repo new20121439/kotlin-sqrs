@@ -1,4 +1,5 @@
-import com.deep.escqrs.core.Event
+package com.deep.escqrs.core
+
 import java.util.*
 
 typealias AggregateIdType = UUID
