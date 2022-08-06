@@ -3,12 +3,13 @@ package com.deep.escqrs.product
 import com.deep.escqrs.core.AggregateIdType
 import com.deep.escqrs.core.Event
 import com.deep.escqrs.core.EventDescriptor
+import com.deep.escqrs.core.EventStore
+import org.springframework.data.jpa.repository.JpaRepository
 
-
-class EventStore (
+class LocalEventStore (
     val store: HashMap<AggregateIdType, MutableList<EventDescriptor>> = HashMap()
-){
-    fun getEventsForAggregate(aggregateId: AggregateIdType): List<Event>{
+): EventStore {
+    override fun getEventsForAggregate(aggregateId: AggregateIdType): List<Event>{
         if (!store.containsKey(aggregateId)) {
             throw AggregateNotFoundException()
         }
@@ -17,7 +18,7 @@ class EventStore (
             ?.map { it.data } ?: emptyList()
     }
 
-    fun saveEvents(aggregateId: AggregateIdType, events: List<Event>, expectedVersion: Int) {
+    override fun saveEvents(aggregateId: AggregateIdType, events: List<Event>, expectedVersion: Int) {
         var eventDescriptors: MutableList<EventDescriptor>  = mutableListOf()
         if (!store.containsKey(aggregateId)) {
             store[aggregateId] = eventDescriptors
@@ -30,13 +31,39 @@ class EventStore (
         var i = expectedVersion
         events.forEach {
             i++
-            store[aggregateId]?.add(EventDescriptor(aggregateId, it, i))
+            store[aggregateId]?.add(EventDescriptor(null, aggregateId, it, i))
+        }
+    }
+}
+
+
+interface EventRepository: JpaRepository<EventDescriptor, AggregateIdType> {
+    fun findByAggregateIdOrderByVersionDesc(aggregateId: AggregateIdType): List<EventDescriptor>
+}
+
+class SqlEventStore(
+    val eventRepository: EventRepository
+) : EventStore {
+    override fun getEventsForAggregate(aggregateId: AggregateIdType): List<Event> {
+        val eventDescriptors = eventRepository.findByAggregateIdOrderByVersionDesc(aggregateId)
+        return eventDescriptors.map { it.data }
+    }
+
+    override fun saveEvents(aggregateId: AggregateIdType, events: List<Event>, expectedVersion: Int) {
+        var eventDescriptors = eventRepository.findByAggregateIdOrderByVersionDesc(aggregateId)
+        if (!eventDescriptors.isEmpty()
+            && eventDescriptors.last().version != expectedVersion
+            && expectedVersion != -1
+        ) {
+            throw VersionMismatchException()
+        }
+        var i = expectedVersion
+        events.forEach {
+            i++
+            eventRepository.save(EventDescriptor(null, aggregateId, it, i))
         }
     }
 
-    fun printStore() {
-        store.forEach(System.out::println)
-    }
 }
 
 class VersionMismatchException (

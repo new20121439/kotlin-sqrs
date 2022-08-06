@@ -2,6 +2,7 @@ package com.deep.escqrs.product
 
 import com.deep.escqrs.core.AggregateIdType
 import com.deep.escqrs.core.AggregateRoot
+import com.deep.escqrs.core.EventStore
 import com.deep.escqrs.core.IRepository
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
