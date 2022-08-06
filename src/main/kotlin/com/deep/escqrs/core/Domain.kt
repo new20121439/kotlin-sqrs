@@ -16,6 +16,10 @@ abstract class AggregateRoot(
     fun getUncommittedChanges(): List<Event> {
         return changes
     }
+
+    fun markChangesAsCommitted() {
+        changes.clear()
+    }
 }
 
 interface IRepository<A: AggregateRoot> {
