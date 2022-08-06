@@ -1,6 +1,5 @@
 package com.deep.escqrs
 
-import com.deep.escqrs.core.EventDescriptor
 import com.deep.escqrs.product.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -11,7 +10,7 @@ class ProductTests {
     @Test
     fun `A product should be created`() {
         // Arrange
-        val eventStore = EventStore()
+        val eventStore = LocalEventStore()
         val repo = Repository(Product::class, eventStore)
         val productCommandHandler = ProductCommandHandler(repo)
 
@@ -30,7 +29,7 @@ class ProductTests {
     @Test
     fun `Product price should be changed`() {
         // Arrange
-        val eventStore = EventStore()
+        val eventStore = LocalEventStore()
         val repo = Repository(Product::class, eventStore)
         val productCommandHandler = ProductCommandHandler(repo)
 
