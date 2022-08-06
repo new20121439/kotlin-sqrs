@@ -10,9 +10,9 @@ abstract class Event : Message()
 
 @Entity
 @Table(
-    name = "event",
+    name = "events",
     uniqueConstraints = [
-        UniqueConstraint(columnNames = ["aggregate-id", "version"])
+        UniqueConstraint(columnNames = ["aggregate_id", "version"])
     ]
 )
 @TypeDef(name = "json", typeClass = JsonType::class)
@@ -22,7 +22,7 @@ data class EventDescriptor(
     @Column(name = "id", updatable = false, nullable = false)
     private val id: Long?,
 
-    @Column(name = "aggregate-id", nullable = false)
+    @Column(name = "aggregate_id", nullable = false)
     val aggregateId: UUID,
 
     @Type(type = "json")
@@ -32,3 +32,7 @@ data class EventDescriptor(
     @Column(nullable = false)
     val version: Int
 )
+
+interface EventHandler<E: Event>{
+    fun handle(event: E)
+}
