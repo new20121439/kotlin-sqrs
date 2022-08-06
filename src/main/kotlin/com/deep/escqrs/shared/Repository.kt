@@ -1,9 +1,9 @@
 package com.deep.escqrs.product
 
-import com.deep.escqrs.core.AggregateIdType
 import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.EventStore
 import com.deep.escqrs.core.IRepository
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
@@ -21,7 +21,7 @@ class Repository<A: AggregateRoot>(
         eventStore.saveEvents(aggregate.id, aggregate.getUncommittedChanges(),expectedVersions)
     }
 
-    override fun getById(aggregateId: AggregateIdType): A {
+    override fun getById(aggregateId: UUID): A {
         val events = eventStore.getEventsForAggregate(aggregateId)
         return type.primaryConstructor!!.call(aggregateId, events)
     }

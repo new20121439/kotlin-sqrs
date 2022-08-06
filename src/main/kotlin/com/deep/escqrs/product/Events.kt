@@ -1,16 +1,16 @@
 package com.deep.escqrs.product
 
 import com.deep.escqrs.core.Event
-import com.deep.escqrs.core.AggregateIdType
+import java.util.*
 
 data class ProductCreated(
-    override val id: AggregateIdType,
+    override val id: UUID,
     val name: String,
     val price: Int
 ): Event()
 
 data class ProductPriceChanged (
-    override val id: AggregateIdType,
+    override val id: UUID,
     val price: Int
 ): Event()
 
