@@ -1,16 +1,16 @@
 package com.deep.escqrs.product
 
-import com.deep.escqrs.core.AggregateIdType
 import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.Event
+import java.util.*
 
 
 class Product (
-    id: AggregateIdType,
+    id: UUID,
     events: List<Event> = emptyList()
 ): AggregateRoot(id, events) {
     constructor(
-        id: AggregateIdType,
+        id: UUID,
         name: String,
         price: Int
     ): this(id) {

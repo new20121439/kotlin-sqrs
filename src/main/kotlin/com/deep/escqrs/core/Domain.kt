@@ -2,10 +2,8 @@ package com.deep.escqrs.core
 
 import java.util.*
 
-typealias AggregateIdType = UUID
-
 abstract class AggregateRoot(
-    val id: AggregateIdType,
+    val id: UUID,
     val events: List<Event>
 ) {
     private var changes: MutableList<Event> = mutableListOf()
@@ -24,5 +22,5 @@ abstract class AggregateRoot(
 
 interface IRepository<A: AggregateRoot> {
     fun save(aggregate: A, expectedVersions: Int)
-    fun getById(aggregateId: AggregateIdType): A
+    fun getById(aggregateId: UUID): A
 }

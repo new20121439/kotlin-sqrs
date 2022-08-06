@@ -1,17 +1,17 @@
 package com.deep.escqrs.product
 
-import com.deep.escqrs.core.AggregateIdType
 import com.deep.escqrs.core.Command
+import java.util.*
 
 
 data class CreateProduct (
-    override val id: AggregateIdType,
+    override val id: UUID,
     var name: String,
     var price: Int
 ): Command()
 
 data class ChangeProductPrice (
-    override val id: AggregateIdType,
+    override val id: UUID,
     var price: Int,
     val originalVersion: Int
 ): Command()

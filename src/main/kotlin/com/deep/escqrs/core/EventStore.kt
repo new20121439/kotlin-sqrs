@@ -1,6 +1,8 @@
 package com.deep.escqrs.core
 
+import java.util.*
+
 interface EventStore {
-    fun getEventsForAggregate(aggregateId: AggregateIdType): List<Event>
-    fun saveEvents(aggregateId: AggregateIdType, events: List<Event>, expectedVersion: Int)
+    fun getEventsForAggregate(aggregateId: UUID): List<Event>
+    fun saveEvents(aggregateId: UUID, events: List<Event>, expectedVersion: Int)
 }

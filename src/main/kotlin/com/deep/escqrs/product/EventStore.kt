@@ -1,15 +1,16 @@
 package com.deep.escqrs.product
 
-import com.deep.escqrs.core.AggregateIdType
 import com.deep.escqrs.core.Event
 import com.deep.escqrs.core.EventDescriptor
 import com.deep.escqrs.core.EventStore
 import org.springframework.data.jpa.repository.JpaRepository
+import java.util.*
+import kotlin.collections.HashMap
 
 class LocalEventStore (
-    val store: HashMap<AggregateIdType, MutableList<EventDescriptor>> = HashMap()
+    val store: HashMap<UUID, MutableList<EventDescriptor>> = HashMap()
 ): EventStore {
-    override fun getEventsForAggregate(aggregateId: AggregateIdType): List<Event>{
+    override fun getEventsForAggregate(aggregateId: UUID): List<Event>{
         if (!store.containsKey(aggregateId)) {
             throw AggregateNotFoundException()
         }
@@ -18,7 +19,7 @@ class LocalEventStore (
             ?.map { it.data } ?: emptyList()
     }
 
-    override fun saveEvents(aggregateId: AggregateIdType, events: List<Event>, expectedVersion: Int) {
+    override fun saveEvents(aggregateId: UUID, events: List<Event>, expectedVersion: Int) {
         var eventDescriptors: MutableList<EventDescriptor>  = mutableListOf()
         if (!store.containsKey(aggregateId)) {
             store[aggregateId] = eventDescriptors
@@ -37,21 +38,21 @@ class LocalEventStore (
 }
 
 
-interface EventRepository: JpaRepository<EventDescriptor, AggregateIdType> {
-    fun findByAggregateIdOrderByVersionDesc(aggregateId: AggregateIdType): List<EventDescriptor>
+interface EventRepository: JpaRepository<EventDescriptor, UUID> {
+    fun findByAggregateIdOrderByVersionDesc(aggregateId: UUID): List<EventDescriptor>
 }
 
 class SqlEventStore(
-    val eventRepository: EventRepository
+    private val eventRepository: EventRepository
 ) : EventStore {
-    override fun getEventsForAggregate(aggregateId: AggregateIdType): List<Event> {
+    override fun getEventsForAggregate(aggregateId: UUID): List<Event> {
         val eventDescriptors = eventRepository.findByAggregateIdOrderByVersionDesc(aggregateId)
         return eventDescriptors.map { it.data }
     }
 
-    override fun saveEvents(aggregateId: AggregateIdType, events: List<Event>, expectedVersion: Int) {
-        var eventDescriptors = eventRepository.findByAggregateIdOrderByVersionDesc(aggregateId)
-        if (!eventDescriptors.isEmpty()
+    override fun saveEvents(aggregateId: UUID, events: List<Event>, expectedVersion: Int) {
+        val eventDescriptors = eventRepository.findByAggregateIdOrderByVersionDesc(aggregateId)
+        if (eventDescriptors.isNotEmpty()
             && eventDescriptors.last().version != expectedVersion
             && expectedVersion != -1
         ) {

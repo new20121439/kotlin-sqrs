@@ -3,6 +3,7 @@ package com.deep.escqrs.core
 import com.vladmihalcea.hibernate.type.json.JsonType
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
+import java.util.*
 import javax.persistence.*
 
 abstract class Event : Message()
@@ -22,7 +23,7 @@ data class EventDescriptor(
     private val id: Long?,
 
     @Column(name = "aggregate-id", nullable = false)
-    val aggregateId: AggregateIdType,
+    val aggregateId: UUID,
 
     @Type(type = "json")
     @Column(nullable = false, columnDefinition = "json")
