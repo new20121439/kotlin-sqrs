@@ -43,7 +43,8 @@ interface EventRepository: JpaRepository<EventDescriptor, UUID> {
 }
 
 class SqlEventStore(
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
+    private val publisher: Publisher
 ) : EventStore {
     override fun getEventsForAggregate(aggregateId: UUID): List<Event> {
         val eventDescriptors = eventRepository.findByAggregateIdOrderByVersionDesc(aggregateId)
@@ -62,9 +63,14 @@ class SqlEventStore(
         events.forEach {
             i++
             eventRepository.save(EventDescriptor(null, aggregateId, it, i))
+            publisher.publish(it)
         }
     }
 
+}
+
+interface Publisher {
+    fun publish(event: Event)
 }
 
 class VersionMismatchException (
