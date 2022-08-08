@@ -2,11 +2,11 @@ package com.deep.escqrs
 
 import com.deep.escqrs.core.EventStore
 import com.deep.escqrs.order.domain.*
+import com.deep.escqrs.order.domain.value_objects.ProductItem
 import com.deep.escqrs.shared.EventRepository
 import com.deep.escqrs.shared.SqlEventStore
 import com.deep.escqrs.shared.EventBus
 import com.deep.escqrs.shared.Repository
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

@@ -2,6 +2,7 @@ package com.deep.escqrs.product.domain
 
 import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.Event
+import com.deep.escqrs.product.domain.value_objects.Price
 import java.util.*
 
 
@@ -12,16 +13,14 @@ class Product (
     constructor(
         id: UUID,
         name: String,
-        price: Int
+        price: Price
     ): this(id) {
         require(name.isNotEmpty()) { "Name must not be empty" }
-        require(price >= 0) { "Price must not be negative" }
-        val createdProduct = ProductCreated(id, name, price)
+        val createdProduct = ProductCreated(id, name, price.value)
         applyChange(createdProduct)
     }
 
-    fun changePrice(newPrice: Int) {
-        require(newPrice >= 0) { "Price must not be negative" }
+    fun changePrice(newPrice: Price) {
         var latestPrice: Int? = null
         for (item in events) {
             latestPrice = when(item) {
@@ -31,7 +30,7 @@ class Product (
             }
             if (latestPrice != null) break
         }
-        if (latestPrice != null  && latestPrice == newPrice) throw ArgumentException("New price is already set")
-        applyChange(ProductPriceChanged(id, newPrice))
+        if (latestPrice != null  && latestPrice == newPrice.value) throw ArgumentException("New price is already set")
+        applyChange(ProductPriceChanged(id, newPrice.value))
     }
 }

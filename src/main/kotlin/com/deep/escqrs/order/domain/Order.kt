@@ -2,6 +2,7 @@ package com.deep.escqrs.order.domain
 
 import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.Event
+import com.deep.escqrs.order.domain.value_objects.ProductItem
 import java.util.*
 
 class Order (

@@ -1,4 +1,4 @@
-package com.deep.escqrs.product.domain
+package com.deep.escqrs.product.domain.value_objects
 
 @JvmInline
 value class Price(val value: Int) {

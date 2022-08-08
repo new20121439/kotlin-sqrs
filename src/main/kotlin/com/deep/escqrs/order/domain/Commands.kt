@@ -1,6 +1,7 @@
 package com.deep.escqrs.order.domain
 
 import com.deep.escqrs.core.Command
+import com.deep.escqrs.order.domain.value_objects.ProductItem
 import java.util.*
 
 data class CreateOrder(

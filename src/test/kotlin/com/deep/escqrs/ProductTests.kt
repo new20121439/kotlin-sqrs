@@ -4,6 +4,7 @@ import com.deep.escqrs.shared.EventRepository
 import com.deep.escqrs.product.domain.ProductCommandHandler
 import com.deep.escqrs.product.domain.ProductIsAlreadyExisted
 import com.deep.escqrs.product.domain.*
+import com.deep.escqrs.product.domain.value_objects.Price
 import com.deep.escqrs.shared.SqlEventStore
 import com.deep.escqrs.product.read_model.ProductEntity
 import com.deep.escqrs.product.read_model.ProductEventHandler
@@ -45,7 +46,7 @@ class ProductTests(
         // Arrange
         eventBus.register(productEventHandler)
         val uuid = UUID.randomUUID()
-        val createProduct = CreateProduct(uuid,"Bicycle", 100)
+        val createProduct = CreateProduct(uuid,"Bicycle", Price(100))
 
         // Act
         productCommandHandler.handle(createProduct)
@@ -56,7 +57,7 @@ class ProductTests(
             eventStore.getEventsForAggregate(uuid)
         )
         assertEquals(
-            ProductEntity(createProduct.id, createProduct.name, createProduct.price),
+            ProductEntity(createProduct.id, createProduct.name, createProduct.price.value),
             productRepository.findById(uuid).get()
         )
     }
@@ -66,7 +67,7 @@ class ProductTests(
         // Arrange
         eventBus.register(productEventHandler)
         val uuid = UUID.randomUUID()
-        val createProduct = CreateProduct(uuid,"Bicycle", 100)
+        val createProduct = CreateProduct(uuid,"Bicycle", Price(100))
 
         // Act
         productCommandHandler.handle(createProduct)
@@ -81,9 +82,9 @@ class ProductTests(
     fun `Product price should be changed`() {
         // Arrange
         val uuid = UUID.randomUUID()
-        val createProduct = CreateProduct(uuid,"Bicycle", 100)
+        val createProduct = CreateProduct(uuid,"Bicycle", Price(100))
         productCommandHandler.handle(createProduct)
-        val priceChange = ChangeProductPrice(uuid, 200, 0)
+        val priceChange = ChangeProductPrice(uuid, Price(200), 0)
 
         // Act
         productCommandHandler.handle(priceChange)
@@ -101,13 +102,10 @@ class ProductTests(
     @Test
     fun `Throw when price is negative`() {
         // Arrange
-        val uuid = UUID.randomUUID()
-        val createProduct = CreateProduct(uuid,"Bicycle", -1)
-
         // Act
         // Assert
         val exception = assertThrows<IllegalArgumentException> {
-            productCommandHandler.handle(createProduct)
+            Price(-1)
         }
         assertEquals("Price must not be negative", exception.message)
     }
