@@ -1,4 +1,4 @@
-package com.deep.escqrs.product.domain
+package com.deep.escqrs.product.command.domain
 
 import com.deep.escqrs.core.Event
 import java.util.*

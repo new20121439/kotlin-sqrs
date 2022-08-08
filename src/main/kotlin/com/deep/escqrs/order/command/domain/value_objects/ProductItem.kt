@@ -1,4 +1,4 @@
-package com.deep.escqrs.order.domain.value_objects
+package com.deep.escqrs.order.command.domain.value_objects
 
 import java.util.*
 

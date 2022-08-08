@@ -1,4 +1,4 @@
-package com.deep.escqrs.product.read_model
+package com.deep.escqrs.product.query
 
 import java.util.*
 

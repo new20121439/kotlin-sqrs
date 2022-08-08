@@ -1,8 +1,12 @@
 package com.deep.escqrs
 
 import com.deep.escqrs.core.EventStore
-import com.deep.escqrs.order.domain.*
-import com.deep.escqrs.order.domain.value_objects.ProductItem
+import com.deep.escqrs.order.command.app.CreateOrder
+import com.deep.escqrs.order.command.app.OrderAddNewProducts
+import com.deep.escqrs.order.command.app.OrderCommandHandler
+import com.deep.escqrs.order.command.app.OrderIsAlreadyExisted
+import com.deep.escqrs.order.command.domain.*
+import com.deep.escqrs.order.command.domain.value_objects.ProductItem
 import com.deep.escqrs.shared.infra.EventRepository
 import com.deep.escqrs.shared.infra.SqlEventStore
 import com.deep.escqrs.shared.infra.EventBus
@@ -39,7 +43,7 @@ class OrderTests (
         // Arrange
         val uuid = UUID.randomUUID()
         val address = "Ha Noi"
-        val productItems = mutableListOf<ProductItem>(
+        val productItems = mutableListOf(
             ProductItem(UUID.randomUUID(), 1),
             ProductItem(UUID.randomUUID(), 2)
         )
@@ -60,7 +64,7 @@ class OrderTests (
         // Arrange
         val uuid = UUID.randomUUID()
         val address = "Ha Noi"
-        val productItems = mutableListOf<ProductItem>(
+        val productItems = mutableListOf(
             ProductItem(UUID.randomUUID(), 1),
             ProductItem(UUID.randomUUID(), 2)
         )
@@ -79,14 +83,14 @@ class OrderTests (
         // Arrange
         val uuid = UUID.randomUUID()
         val address = "Ha Noi"
-        val productItems = mutableListOf<ProductItem>(
+        val productItems = mutableListOf(
             ProductItem(UUID.randomUUID(), 1),
             ProductItem(UUID.randomUUID(), 2)
         )
         val createOrder = CreateOrder(uuid, productItems, address)
         commandHandler.handle(createOrder)
 
-        val newProductItems = mutableListOf<ProductItem>(
+        val newProductItems = mutableListOf(
             ProductItem(UUID.randomUUID(), 3)
         )
         val addNewProducts = OrderAddNewProducts(uuid, newProductItems, 0)
@@ -133,7 +137,7 @@ class OrderTests (
     fun `Throws when Address is empty`() {
         // Arrange
         val uuid = UUID.randomUUID()
-        val productItems = mutableListOf<ProductItem>(
+        val productItems = mutableListOf(
             ProductItem(UUID.randomUUID(), 1),
             ProductItem(UUID.randomUUID(), 2)
         )

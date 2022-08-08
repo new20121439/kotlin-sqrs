@@ -1,14 +1,18 @@
 package com.deep.escqrs
 
+import com.deep.escqrs.product.command.app.ChangeProductPrice
+import com.deep.escqrs.product.command.app.CreateProduct
 import com.deep.escqrs.shared.infra.EventRepository
-import com.deep.escqrs.product.domain.ProductCommandHandler
-import com.deep.escqrs.product.domain.ProductIsAlreadyExisted
-import com.deep.escqrs.product.domain.*
-import com.deep.escqrs.product.domain.value_objects.Price
+import com.deep.escqrs.product.command.app.ProductCommandHandler
+import com.deep.escqrs.product.command.app.ProductIsAlreadyExisted
+import com.deep.escqrs.product.command.domain.Product
+import com.deep.escqrs.product.command.domain.ProductCreated
+import com.deep.escqrs.product.command.domain.ProductPriceChanged
+import com.deep.escqrs.product.command.domain.value_objects.Price
 import com.deep.escqrs.shared.infra.SqlEventStore
-import com.deep.escqrs.product.read_model.ProductEntity
-import com.deep.escqrs.product.read_model.ProductEventHandler
-import com.deep.escqrs.product.read_model.ProductRepository
+import com.deep.escqrs.product.query.ProductEntity
+import com.deep.escqrs.product.query.ProductEventHandler
+import com.deep.escqrs.product.query.ProductRepository
 import com.deep.escqrs.shared.infra.EventBus
 import com.deep.escqrs.shared.infra.Repository
 import org.junit.jupiter.api.Assertions.assertEquals

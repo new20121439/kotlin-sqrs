@@ -1,7 +1,7 @@
-package com.deep.escqrs.product.read_model
+package com.deep.escqrs.product.query
 
 import com.deep.escqrs.core.EventHandler
-import com.deep.escqrs.product.domain.ProductCreated
+import com.deep.escqrs.product.command.domain.ProductCreated
 
 
 class ProductEventHandler (

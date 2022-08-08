@@ -1,8 +1,8 @@
-package com.deep.escqrs.product.domain
+package com.deep.escqrs.product.command.domain
 
 import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.Event
-import com.deep.escqrs.product.domain.value_objects.Price
+import com.deep.escqrs.product.command.domain.value_objects.Price
 import java.util.*
 
 

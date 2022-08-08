@@ -1,8 +1,8 @@
-package com.deep.escqrs.order.domain
+package com.deep.escqrs.order.command.domain
 
 import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.Event
-import com.deep.escqrs.order.domain.value_objects.ProductItem
+import com.deep.escqrs.order.command.domain.value_objects.ProductItem
 import java.util.*
 
 class Order (

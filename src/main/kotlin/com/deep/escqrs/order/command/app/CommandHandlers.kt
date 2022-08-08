@@ -1,6 +1,7 @@
-package com.deep.escqrs.order.domain
+package com.deep.escqrs.order.command.app
 
 import com.deep.escqrs.core.IRepository
+import com.deep.escqrs.order.command.domain.Order
 
 class OrderCommandHandler (
     private val repo: IRepository<Order>
