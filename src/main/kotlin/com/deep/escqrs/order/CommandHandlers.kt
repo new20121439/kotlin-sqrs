@@ -6,6 +6,10 @@ class OrderCommandHandler (
     private val repo: IRepository<Order>
 ) {
     fun handle(command: CreateOrder) {
+        val foundOrder = repo.getById(command.id)
+        if (foundOrder.events.isNotEmpty()) {
+            throw OrderIsAlreadyExisted()
+        }
         val order = Order(command.id, command.productItems, command.address)
         repo.save(order, -1)
     }
@@ -21,4 +25,8 @@ class OrderCommandHandler (
         order.removeProducts(command.removedProductItems)
         repo.save(order, command.originalVersion)
     }
+}
+
+class OrderIsAlreadyExisted(): Exception() {
+
 }
