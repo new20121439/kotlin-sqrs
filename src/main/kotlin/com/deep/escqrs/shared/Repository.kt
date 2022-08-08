@@ -1,4 +1,4 @@
-package com.deep.escqrs.product
+package com.deep.escqrs.shared
 
 import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.EventStore

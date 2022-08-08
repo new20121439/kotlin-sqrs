@@ -1,4 +1,4 @@
-package com.deep.escqrs.product
+package com.deep.escqrs.product.domain
 
 import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.Event
@@ -14,12 +14,14 @@ class Product (
         name: String,
         price: Int
     ): this(id) {
+        require(name.isNotEmpty()) { "Name must not be empty" }
+        require(price >= 0) { "Price must not be negative" }
         val createdProduct = ProductCreated(id, name, price)
         applyChange(createdProduct)
     }
 
     fun changePrice(newPrice: Int) {
-        if (newPrice < 0) throw ArgumentException("Price must not be negative")
+        require(newPrice >= 0) { "Price must not be negative" }
         var latestPrice: Int? = null
         for (item in events) {
             latestPrice = when(item) {

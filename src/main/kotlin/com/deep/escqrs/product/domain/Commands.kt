@@ -1,8 +1,7 @@
-package com.deep.escqrs.product
+package com.deep.escqrs.product.domain
 
 import com.deep.escqrs.core.Command
 import java.util.*
-
 
 data class CreateProduct (
     override val id: UUID,
