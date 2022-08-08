@@ -1,10 +1,10 @@
 package com.deep.escqrs
 
 import com.deep.escqrs.order.*
-import com.deep.escqrs.product.EventBus
-import com.deep.escqrs.product.EventRepository
-import com.deep.escqrs.product.Repository
-import com.deep.escqrs.product.SqlEventStore
+import com.deep.escqrs.shared.EventRepository
+import com.deep.escqrs.shared.SqlEventStore
+import com.deep.escqrs.shared.EventBus
+import com.deep.escqrs.shared.Repository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -95,5 +95,15 @@ class OrderTests (
             ),
             eventStore.getEventsForAggregate(uuid)
         )
+    }
+
+    @Test
+    fun `Throws QuantityIsNotPositiveNumber when quantity of product is not positive`() {
+        // Arrange
+        // Act
+        // Assert
+        assertThrows<QuantityIsNotPositiveNumber>{
+            ProductItem(UUID.randomUUID(), 0)
+        }
     }
 }
