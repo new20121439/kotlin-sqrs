@@ -11,6 +11,7 @@ import com.deep.escqrs.product.read_model.ProductRepository
 import com.deep.escqrs.shared.EventBus
 import com.deep.escqrs.shared.Repository
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,19 +25,29 @@ class ProductTests(
     @Autowired val eventRepository: EventRepository,
     @Autowired val productRepository: ProductRepository
 ) {
+    private lateinit var eventBus: EventBus
+    private lateinit var eventStore: SqlEventStore
+    private lateinit var repo: Repository<Product>
+    private lateinit var productCommandHandler: ProductCommandHandler
+    private lateinit var productEventHandler: ProductEventHandler
+
+    @BeforeEach
+    fun beforeEach() {
+        eventBus = EventBus()
+        eventStore = SqlEventStore(eventRepository, eventBus)
+        repo = Repository(Product::class, eventStore)
+        productCommandHandler = ProductCommandHandler(repo)
+        productEventHandler = ProductEventHandler(productRepository)
+    }
 
     @Test
     fun `A product should be created in SQL`() {
         // Arrange
-        val eventBus = EventBus()
-        val eventStore = SqlEventStore(eventRepository, eventBus)
-        val repo = Repository(Product::class, eventStore)
-        val productCommandHandler = ProductCommandHandler(repo)
-        val productEventHandler = ProductEventHandler(productRepository)
         eventBus.register(productEventHandler)
-        // Act
         val uuid = UUID.randomUUID()
         val createProduct = CreateProduct(uuid,"Bicycle", 100)
+
+        // Act
         productCommandHandler.handle(createProduct)
 
         // Assert
@@ -53,15 +64,11 @@ class ProductTests(
     @Test
     fun `Should throw ProductIsAlreadyExisted when id is valid in db`() {
         // Arrange
-        val eventBus = EventBus()
-        val eventStore = SqlEventStore(eventRepository, eventBus)
-        val repo = Repository(Product::class, eventStore)
-        val productCommandHandler = ProductCommandHandler(repo)
-        val productEventHandler = ProductEventHandler(productRepository)
         eventBus.register(productEventHandler)
-        // Act
         val uuid = UUID.randomUUID()
         val createProduct = CreateProduct(uuid,"Bicycle", 100)
+
+        // Act
         productCommandHandler.handle(createProduct)
 
         // Assert
@@ -73,16 +80,12 @@ class ProductTests(
     @Test
     fun `Product price should be changed`() {
         // Arrange
-        val eventBus = EventBus()
-        val eventStore = SqlEventStore(eventRepository, eventBus)
-        val repo = Repository(Product::class, eventStore)
-        val productCommandHandler = ProductCommandHandler(repo)
-
-        // Act
         val uuid = UUID.randomUUID()
         val createProduct = CreateProduct(uuid,"Bicycle", 100)
         productCommandHandler.handle(createProduct)
         val priceChange = ChangeProductPrice(uuid, 200, 0)
+
+        // Act
         productCommandHandler.handle(priceChange)
 
         // Assert
@@ -93,5 +96,19 @@ class ProductTests(
             ),
             eventStore.getEventsForAggregate(uuid)
         )
+    }
+
+    @Test
+    fun `Throw when price is negative`() {
+        // Arrange
+        val uuid = UUID.randomUUID()
+        val createProduct = CreateProduct(uuid,"Bicycle", -1)
+
+        // Act
+        // Assert
+        val exception = assertThrows<IllegalArgumentException> {
+            productCommandHandler.handle(createProduct)
+        }
+        assertEquals("Price must not be negative", exception.message)
     }
 }
