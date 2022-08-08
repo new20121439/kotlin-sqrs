@@ -1,4 +1,4 @@
-package com.deep.escqrs.shared
+package com.deep.escqrs.shared.infra
 
 import com.deep.escqrs.core.Event
 import com.deep.escqrs.core.EventHandler
