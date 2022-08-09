@@ -2,7 +2,9 @@ package com.deep.escqrs.shared.infra
 
 import com.deep.escqrs.core.Event
 import com.deep.escqrs.core.EventHandler
+import org.springframework.stereotype.Component
 
+@Component
 class EventBus: Publisher {
     private val topics = mutableMapOf<String, MutableList<EventHandler<Event>>>()
 
@@ -19,9 +21,17 @@ class EventBus: Publisher {
         }
     }
 
+    /* // !!! reified does not work in Java Example: using @component
     @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
     inline fun <reified T: Event> register(handler: EventHandler<T>) {
         val typeName = T::class.java.typeName
+        val eventHandlers = topics[typeName] ?: mutableListOf()
+        eventHandlers.add(handler as EventHandler<Event>)
+        topics[typeName] = eventHandlers
+    }
+     */
+
+    fun <T: Event> register(typeName: String, handler: EventHandler<T>) {
         val eventHandlers = topics[typeName] ?: mutableListOf()
         eventHandlers.add(handler as EventHandler<Event>)
         topics[typeName] = eventHandlers
