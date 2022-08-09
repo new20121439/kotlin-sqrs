@@ -20,7 +20,7 @@ abstract class AggregateRoot(
     }
 }
 
-interface IRepository<A: AggregateRoot> {
+interface Repository<A: AggregateRoot> {
     fun save(aggregate: A, expectedVersions: Int)
     fun getById(aggregateId: UUID): A
 }
