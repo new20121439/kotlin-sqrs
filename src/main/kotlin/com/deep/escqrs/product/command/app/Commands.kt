@@ -1,7 +1,7 @@
 package com.deep.escqrs.product.command.app
 
 import com.deep.escqrs.core.Command
-import com.deep.escqrs.product.command.domain.value_objects.Price
+import com.deep.escqrs.product.domain.value_objects.Price
 import java.util.*
 
 data class CreateProduct (

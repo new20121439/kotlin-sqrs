@@ -1,10 +1,14 @@
 package com.deep.escqrs.order.command.app
 
-import com.deep.escqrs.core.IRepository
-import com.deep.escqrs.order.command.domain.Order
+import com.deep.escqrs.order.domain.Order
+import com.deep.escqrs.order.domain.OrderRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
+
+@Component
 class OrderCommandHandler (
-    private val repo: IRepository<Order>
+    @Autowired private val repo: OrderRepository
 ) {
     fun handle(command: CreateOrder) {
         val foundOrder = repo.getById(command.id)

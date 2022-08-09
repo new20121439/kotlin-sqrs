@@ -1,10 +1,10 @@
 package com.deep.escqrs.product.command.app
 
-import com.deep.escqrs.core.IRepository
-import com.deep.escqrs.product.command.domain.Product
+import com.deep.escqrs.product.domain.Product
+import com.deep.escqrs.product.domain.ProductRepository
 
 class ProductCommandHandler (
-    private val repo: IRepository<Product>
+    private val repo: ProductRepository
 ){
     fun handle(command: CreateProduct) {
         val foundProduct = repo.getById(command.id)
