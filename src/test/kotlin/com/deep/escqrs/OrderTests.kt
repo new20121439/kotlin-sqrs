@@ -1,16 +1,15 @@
 package com.deep.escqrs
 
 import com.deep.escqrs.core.EventStore
-import com.deep.escqrs.order.command.app.CreateOrder
-import com.deep.escqrs.order.command.app.OrderAddNewProducts
-import com.deep.escqrs.order.command.app.OrderCommandHandler
-import com.deep.escqrs.order.command.app.OrderIsAlreadyExisted
-import com.deep.escqrs.order.command.domain.*
-import com.deep.escqrs.order.command.domain.value_objects.ProductItem
+import com.deep.escqrs.order.command.app.*
+import com.deep.escqrs.order.command.infra.OrderRepositoryImpl
+import com.deep.escqrs.order.domain.value_objects.ProductItem
+import com.deep.escqrs.order.domain.OrderCreated
+import com.deep.escqrs.order.domain.OrderNewProductsAdded
+import com.deep.escqrs.order.domain.OrderRepository
 import com.deep.escqrs.shared.infra.EventRepository
 import com.deep.escqrs.shared.infra.SqlEventStore
 import com.deep.escqrs.shared.infra.EventBus
-import com.deep.escqrs.shared.infra.Repository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,14 +26,14 @@ class OrderTests (
 ){
     private lateinit var eventBus: EventBus
     private lateinit var eventStore: EventStore
-    private lateinit var repo: Repository<Order>
+    private lateinit var repo: OrderRepository
     private lateinit var commandHandler: OrderCommandHandler
 
     @BeforeEach
     fun beforeEach() {
         eventBus = EventBus()
         eventStore = SqlEventStore(eventRepository, eventBus)
-        repo = Repository(Order::class, eventStore)
+        repo = OrderRepositoryImpl(eventStore)
         commandHandler = OrderCommandHandler(repo)
     }
 

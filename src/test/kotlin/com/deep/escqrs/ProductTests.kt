@@ -5,16 +5,15 @@ import com.deep.escqrs.product.command.app.CreateProduct
 import com.deep.escqrs.shared.infra.EventRepository
 import com.deep.escqrs.product.command.app.ProductCommandHandler
 import com.deep.escqrs.product.command.app.ProductIsAlreadyExisted
-import com.deep.escqrs.product.command.domain.Product
-import com.deep.escqrs.product.command.domain.ProductCreated
-import com.deep.escqrs.product.command.domain.ProductPriceChanged
-import com.deep.escqrs.product.command.domain.value_objects.Price
+import com.deep.escqrs.product.command.infra.ProductRepositoryImpl
+import com.deep.escqrs.product.domain.ProductCreated
+import com.deep.escqrs.product.domain.ProductPriceChanged
+import com.deep.escqrs.product.domain.value_objects.Price
 import com.deep.escqrs.shared.infra.SqlEventStore
 import com.deep.escqrs.product.query.ProductEntity
 import com.deep.escqrs.product.query.ProductEventHandler
 import com.deep.escqrs.product.query.ProductRepository
 import com.deep.escqrs.shared.infra.EventBus
-import com.deep.escqrs.shared.infra.Repository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,11 +27,11 @@ import java.util.*
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ProductTests(
     @Autowired val eventRepository: EventRepository,
-    @Autowired val productRepository: ProductRepository
+    @Autowired val productReadRepository: ProductRepository
 ) {
     private lateinit var eventBus: EventBus
     private lateinit var eventStore: SqlEventStore
-    private lateinit var repo: Repository<Product>
+    private lateinit var repo: com.deep.escqrs.product.domain.ProductRepository
     private lateinit var productCommandHandler: ProductCommandHandler
     private lateinit var productEventHandler: ProductEventHandler
 
@@ -40,15 +39,15 @@ class ProductTests(
     fun beforeEach() {
         eventBus = EventBus()
         eventStore = SqlEventStore(eventRepository, eventBus)
-        repo = Repository(Product::class, eventStore)
+        repo = ProductRepositoryImpl(eventStore)
         productCommandHandler = ProductCommandHandler(repo)
-        productEventHandler = ProductEventHandler(productRepository)
+        productEventHandler = ProductEventHandler(productReadRepository)
     }
 
     @Test
-    fun `A product should be created in SQL`() {
+    fun `A product should be created in DB`() {
         // Arrange
-        eventBus.register(productEventHandler)
+        eventBus.register(ProductCreated::class.java.typeName, productEventHandler)
         val uuid = UUID.randomUUID()
         val createProduct = CreateProduct(uuid,"Bicycle", Price(100))
 
@@ -62,14 +61,13 @@ class ProductTests(
         )
         assertEquals(
             ProductEntity(createProduct.id, createProduct.name, createProduct.price.value),
-            productRepository.findById(uuid).get()
+            productReadRepository.findById(uuid).get()
         )
     }
 
     @Test
     fun `Should throw ProductIsAlreadyExisted when id is valid in db`() {
         // Arrange
-        eventBus.register(productEventHandler)
         val uuid = UUID.randomUUID()
         val createProduct = CreateProduct(uuid,"Bicycle", Price(100))
 
