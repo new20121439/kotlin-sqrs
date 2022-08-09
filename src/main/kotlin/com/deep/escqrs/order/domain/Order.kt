@@ -1,9 +1,12 @@
-package com.deep.escqrs.order.command.domain
+package com.deep.escqrs.order.domain
 
 import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.Event
-import com.deep.escqrs.order.command.domain.value_objects.ProductItem
+import com.deep.escqrs.core.Repository
+import com.deep.escqrs.order.domain.value_objects.ProductItem
 import java.util.*
+
+interface OrderRepository: Repository<Order>
 
 class Order (
     id: UUID,

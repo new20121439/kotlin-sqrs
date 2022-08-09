@@ -1,10 +1,12 @@
-package com.deep.escqrs.product.command.domain
+package com.deep.escqrs.product.domain
 
 import com.deep.escqrs.core.AggregateRoot
 import com.deep.escqrs.core.Event
-import com.deep.escqrs.product.command.domain.value_objects.Price
+import com.deep.escqrs.core.Repository
+import com.deep.escqrs.product.domain.value_objects.Price
 import java.util.*
 
+interface ProductRepository: Repository<Product>
 
 class Product (
     id: UUID,

@@ -3,7 +3,9 @@ package com.deep.escqrs.shared.infra
 import com.deep.escqrs.core.Event
 import com.deep.escqrs.core.EventDescriptor
 import com.deep.escqrs.core.EventStore
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Component
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -42,9 +44,10 @@ interface EventRepository: JpaRepository<EventDescriptor, UUID> {
     fun findByAggregateIdOrderByVersionDesc(aggregateId: UUID): List<EventDescriptor>
 }
 
+@Component
 class SqlEventStore(
     private val eventRepository: EventRepository,
-    private val publisher: Publisher
+    @Autowired private val publisher: Publisher
 ) : EventStore {
     override fun getEventsForAggregate(aggregateId: UUID): List<Event> {
         val eventDescriptors = eventRepository.findByAggregateIdOrderByVersionDesc(aggregateId)
